@@ -5,14 +5,18 @@ namespace App\Http\Controllers;
 use App\Models\Task;
 use App\Models\Project;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class TaskController extends Controller
 {
     public function index(Request $request)
     {
+        $userId = Auth::user()->id;
+
         $projects = Project::all();
         $currentProject = $request->get('project_id', $projects->first()?->id);
         $tasks = Task::where('project_id', $currentProject)
+            ->where('user_id', $userId)
             ->orderBy('priority')
             ->get();
 
@@ -31,7 +35,8 @@ class TaskController extends Controller
         Task::create([
             'name' => $request->name,
             'priority' => $priority,
-            'project_id' => $request->project_id
+            'project_id' => $request->project_id,
+            'user_id' => Auth::user()->id
         ]);
 
         return redirect()->route('tasks.index', ['project_id' => $request->project_id]);
