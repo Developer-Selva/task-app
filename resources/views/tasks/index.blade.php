@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container my-5">
-    <h2 class="mb-4 text-center">🗂️ Task Manager</h2>
+    <h2 class="mb-4 text-center">🗂️ Task Manager (manage your taks)</h2>
 
     {{-- Add Task --}}
     <div class="card mb-4 shadow-sm">
