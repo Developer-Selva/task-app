@@ -3,7 +3,7 @@ name: Deploy to EC2
 on:
   push:
     branches:
-      - main  # or master or your deploy branch
+      - main  # Change if your default branch is different
 
 jobs:
   deploy:
@@ -22,11 +22,19 @@ jobs:
       run: |
         ssh -o StrictHostKeyChecking=no ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} << 'EOF'
           cd /var/www/task-app
+
+          echo "📥 Pulling latest code..."
           git pull origin main
+
+          echo "📦 Installing dependencies..."
           composer install --no-interaction --prefer-dist --optimize-autoloader
+
+          echo "🔧 Running Laravel commands..."
           php artisan migrate --force
           php artisan config:cache
           php artisan route:cache
           php artisan view:cache
+
+          echo "♻️ Restarting Apache..."
           sudo systemctl restart apache2
         EOF
